@@ -16,6 +16,10 @@ public class Task {
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.OPEN;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TaskPriority priority = TaskPriority.MEDIUM;
+
     protected Task() {
     }
 
@@ -28,4 +32,6 @@ public class Task {
     public void setTitle(String title) { this.title = title; }
     public TaskStatus getStatus() { return status; }
     public void setStatus(TaskStatus status) { this.status = status; }
+    public TaskPriority getPriority() { return priority; }
+    public void setPriority(TaskPriority priority) { this.priority = priority; }
 }
