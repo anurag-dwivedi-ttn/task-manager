@@ -7,7 +7,7 @@
 
 ## 2. Field-named validation errors
 
-- [ ] 2.1 Add a `@RestControllerAdvice` that returns HTTP 400 with a consistent error body whose message names the field for Bean Validation failures (`title`) and unreadable JSON / invalid enum values (`priority`); verify with `@WebMvcTest` that blank title → 400 naming `title`, and invalid priority → 400 naming `priority`
+- [x] 2.1 Add a `@RestControllerAdvice` that returns HTTP 400 with a consistent error body whose message names the field for Bean Validation failures (`title`) and unreadable JSON / invalid enum values (`priority`); verify with `@WebMvcTest` that blank title → 400 naming `title`, and invalid priority → 400 naming `priority`
 
 ## 3. Create and read priority via API
 
