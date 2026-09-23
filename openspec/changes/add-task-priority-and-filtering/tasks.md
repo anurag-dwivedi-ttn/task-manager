@@ -16,4 +16,4 @@
 ## 4. Database filtering
 
 - [x] 4.1 Add a `TaskRepository` query method that filters by optional `status` and `priority` in JPQL/SQL (`null` param = no filter on that field); verify with `@DataJpaTest` that seeding mixed rows and querying `OPEN` + `HIGH` returns only matches, and omitting a param does not filter that field
-- [ ] 4.2 Wire optional `status` and `priority` query params through `TaskController` → `TaskService` → repository (no in-memory filtering); verify with a Mockito service test that the repository filter method is invoked with the given params, and with `@WebMvcTest` that `GET /api/tasks?status=OPEN&priority=HIGH` returns only the mocked matching tasks
+- [x] 4.2 Wire optional `status` and `priority` query params through `TaskController` → `TaskService` → repository (no in-memory filtering); verify with a Mockito service test that the repository filter method is invoked with the given params, and with `@WebMvcTest` that `GET /api/tasks?status=OPEN&priority=HIGH` returns only the mocked matching tasks

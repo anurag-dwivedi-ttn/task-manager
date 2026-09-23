@@ -1,6 +1,8 @@
 package com.example.task_manager.task;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,7 +60,7 @@ class TaskControllerPriorityTest {
     void getAndListIncludePriority() throws Exception {
         TaskResponse response = new TaskResponse(3L, "Listed", TaskStatus.OPEN, TaskPriority.LOW);
         when(taskService.findById(3L)).thenReturn(response);
-        when(taskService.findAll()).thenReturn(List.of(response));
+        when(taskService.findAll(isNull(), isNull())).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/tasks/3"))
                 .andExpect(status().isOk())
@@ -72,5 +74,20 @@ class TaskControllerPriorityTest {
                 .andExpect(jsonPath("$[0].id").value(3))
                 .andExpect(jsonPath("$[0].title").value("Listed"))
                 .andExpect(jsonPath("$[0].status").value("OPEN"));
+    }
+
+    @Test
+    void listFiltersByStatusAndPriority() throws Exception {
+        when(taskService.findAll(eq(TaskStatus.OPEN), eq(TaskPriority.HIGH)))
+                .thenReturn(List.of(new TaskResponse(4L, "Urgent open", TaskStatus.OPEN, TaskPriority.HIGH)));
+
+        mockMvc.perform(get("/api/tasks")
+                        .param("status", "OPEN")
+                        .param("priority", "HIGH"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].title").value("Urgent open"))
+                .andExpect(jsonPath("$[0].status").value("OPEN"))
+                .andExpect(jsonPath("$[0].priority").value("HIGH"));
     }
 }

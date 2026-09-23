@@ -21,8 +21,10 @@ public class TaskService {
         return TaskResponse.from(saved);
     }
 
-    public List<TaskResponse> findAll() {
-        return repository.findAll().stream().map(TaskResponse::from).toList();
+    public List<TaskResponse> findAll(TaskStatus status, TaskPriority priority) {
+        return repository.findByStatusAndPriority(status, priority).stream()
+                .map(TaskResponse::from)
+                .toList();
     }
 
     public TaskResponse findById(Long id) {
