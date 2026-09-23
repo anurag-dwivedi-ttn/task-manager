@@ -11,7 +11,7 @@
 
 ## 3. Create and read priority via API
 
-- [ ] 3.1 Ensure create/get/list paths return `priority` without changing existing fields; verify with `@WebMvcTest` (and service mocks as needed) that `POST` with `priority: HIGH` returns 201 with `HIGH`, and `POST` omitting priority returns 201 with `MEDIUM`
+- [x] 3.1 Ensure create/get/list paths return `priority` without changing existing fields; verify with `@WebMvcTest` (and service mocks as needed) that `POST` with `priority: HIGH` returns 201 with `HIGH`, and `POST` omitting priority returns 201 with `MEDIUM`
 
 ## 4. Database filtering
 
