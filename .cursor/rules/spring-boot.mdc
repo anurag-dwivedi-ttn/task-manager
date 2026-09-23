@@ -1,0 +1,14 @@
+---
+description: Spring Boot conventions and spec-driven workflow
+alwaysApply: true
+---
+- Do not implement any feature without an active OpenSpec change; follow its tasks.md in order.
+- Base package is com.example.task_manager. Java 17, Maven.
+- Layers: Controller -> Service -> Repository. No business logic in controllers.
+- Use DTOs (records) for request/response; never expose JPA entities directly.
+- Validate input with Bean Validation (@Valid, @NotBlank, etc.).
+- Handle errors in one @RestControllerAdvice returning a consistent error body.
+- Tests: JUnit 5; @WebMvcTest for controllers, @DataJpaTest for repositories, Mockito for service unit tests.
+- Every task must have at least one test before it is checked off in tasks.md.
+- Commit format: feat(<change-name>): <task-id> <summary>
+- If the implementation contradicts the spec, stop and update the spec and tasks first.
