@@ -3,7 +3,7 @@
 ## 1. Priority domain model and DTOs
 
 - [x] 1.1 Add `TaskPriority` enum (`LOW`, `MEDIUM`, `HIGH`) and persist it on `Task` with `@Enumerated(STRING)`, default `MEDIUM`; extend `CreateTaskRequest` (optional priority) and `TaskResponse` (include priority); verify with a focused unit/mapping test that `TaskResponse.from` includes priority and omitted create priority maps to `MEDIUM`
-- [ ] 1.2 Update `TaskService.create` to apply default `MEDIUM` when request priority is null and save with the chosen priority; verify with a Mockito service unit test that save receives `HIGH` when requested and `MEDIUM` when priority is null
+- [x] 1.2 Update `TaskService.create` to apply default `MEDIUM` when request priority is null and save with the chosen priority; verify with a Mockito service unit test that save receives `HIGH` when requested and `MEDIUM` when priority is null
 
 ## 2. Field-named validation errors
 

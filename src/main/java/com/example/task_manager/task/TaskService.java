@@ -15,7 +15,9 @@ public class TaskService {
     }
 
     public TaskResponse create(CreateTaskRequest request) {
-        Task saved = repository.save(new Task(request.title()));
+        Task task = new Task(request.title());
+        task.setPriority(request.priority() != null ? request.priority() : TaskPriority.MEDIUM);
+        Task saved = repository.save(task);
         return TaskResponse.from(saved);
     }
 
