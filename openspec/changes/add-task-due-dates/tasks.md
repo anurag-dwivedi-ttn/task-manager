@@ -7,7 +7,7 @@
 
 ## 2. Invalid due date validation
 
-- [ ] 2.1 Ensure malformed `dueDate` on `POST /api/tasks` returns HTTP 400 with a message naming `dueDate` (extend or reuse `ApiExceptionHandler` / Jackson path as needed); verify with `@WebMvcTest` sending an invalid date string
+- [x] 2.1 Ensure malformed `dueDate` on `POST /api/tasks` returns HTTP 400 with a message naming `dueDate` (extend or reuse `ApiExceptionHandler` / Jackson path as needed); verify with `@WebMvcTest` sending an invalid date string
 
 ## 3. Create and read due date via API
 

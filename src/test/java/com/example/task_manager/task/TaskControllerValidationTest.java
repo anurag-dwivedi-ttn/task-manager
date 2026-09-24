@@ -31,6 +31,15 @@ class TaskControllerValidationTest {
     }
 
     @Test
+    void invalidDueDateReturns400NamingDueDate() throws Exception {
+        mockMvc.perform(post("/api/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Ship\",\"dueDate\":\"not-a-date\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("dueDate")));
+    }
+
+    @Test
     void invalidPriorityReturns400NamingPriority() throws Exception {
         mockMvc.perform(post("/api/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
