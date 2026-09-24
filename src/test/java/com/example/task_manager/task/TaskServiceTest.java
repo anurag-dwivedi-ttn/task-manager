@@ -28,7 +28,7 @@ class TaskServiceTest {
     void createSavesHighPriorityWhenRequested() {
         when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        TaskResponse response = service.create(new CreateTaskRequest("Urgent", TaskPriority.HIGH));
+        TaskResponse response = service.create(new CreateTaskRequest("Urgent", TaskPriority.HIGH, null));
 
         assertThat(response.priority()).isEqualTo(TaskPriority.HIGH);
         verify(repository).save(argThat(task ->
@@ -39,7 +39,7 @@ class TaskServiceTest {
     void createSavesMediumPriorityWhenPriorityIsNull() {
         when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        TaskResponse response = service.create(new CreateTaskRequest("Routine", null));
+        TaskResponse response = service.create(new CreateTaskRequest("Routine", null, null));
 
         assertThat(response.priority()).isEqualTo(TaskPriority.MEDIUM);
         verify(repository).save(argThat(task ->

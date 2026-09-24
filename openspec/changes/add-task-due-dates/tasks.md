@@ -2,7 +2,7 @@
 
 ## 1. Due date domain model and DTOs
 
-- [ ] 1.1 Add nullable `LocalDate dueDate` on `Task`; extend `CreateTaskRequest` and `TaskResponse` (include `dueDate` in `from`); verify with a focused unit/mapping test that unset due date maps to `null` in the response and an explicit date round-trips
+- [x] 1.1 Add nullable `LocalDate dueDate` on `Task`; extend `CreateTaskRequest` and `TaskResponse` (include `dueDate` in `from`); verify with a focused unit/mapping test that unset due date maps to `null` in the response and an explicit date round-trips
 - [ ] 1.2 Update `TaskService.create` to persist optional `dueDate` from the request; verify with a Mockito service unit test that save receives the given date when provided and null when omitted
 
 ## 2. Invalid due date validation

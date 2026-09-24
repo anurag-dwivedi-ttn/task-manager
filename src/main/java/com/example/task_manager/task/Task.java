@@ -1,6 +1,7 @@
 package com.example.task_manager.task;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class Task {
@@ -20,6 +21,8 @@ public class Task {
     @Column(nullable = false)
     private TaskPriority priority = TaskPriority.MEDIUM;
 
+    private LocalDate dueDate;
+
     protected Task() {
     }
 
@@ -34,4 +37,6 @@ public class Task {
     public void setStatus(TaskStatus status) { this.status = status; }
     public TaskPriority getPriority() { return priority; }
     public void setPriority(TaskPriority priority) { this.priority = priority; }
+    public LocalDate getDueDate() { return dueDate; }
+    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
 }

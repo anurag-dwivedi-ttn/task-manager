@@ -29,7 +29,7 @@ class TaskControllerPriorityTest {
     @Test
     void createWithHighPriorityReturns201WithHigh() throws Exception {
         when(taskService.create(any(CreateTaskRequest.class)))
-                .thenReturn(new TaskResponse(1L, "Ship", TaskStatus.OPEN, TaskPriority.HIGH));
+                .thenReturn(new TaskResponse(1L, "Ship", TaskStatus.OPEN, TaskPriority.HIGH, null));
 
         mockMvc.perform(post("/api/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -44,7 +44,7 @@ class TaskControllerPriorityTest {
     @Test
     void createOmittingPriorityReturns201WithMedium() throws Exception {
         when(taskService.create(any(CreateTaskRequest.class)))
-                .thenReturn(new TaskResponse(2L, "Routine", TaskStatus.OPEN, TaskPriority.MEDIUM));
+                .thenReturn(new TaskResponse(2L, "Routine", TaskStatus.OPEN, TaskPriority.MEDIUM, null));
 
         mockMvc.perform(post("/api/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,7 +58,7 @@ class TaskControllerPriorityTest {
 
     @Test
     void getAndListIncludePriority() throws Exception {
-        TaskResponse response = new TaskResponse(3L, "Listed", TaskStatus.OPEN, TaskPriority.LOW);
+        TaskResponse response = new TaskResponse(3L, "Listed", TaskStatus.OPEN, TaskPriority.LOW, null);
         when(taskService.findById(3L)).thenReturn(response);
         when(taskService.findAll(isNull(), isNull())).thenReturn(List.of(response));
 
@@ -79,7 +79,7 @@ class TaskControllerPriorityTest {
     @Test
     void listFiltersByStatusAndPriority() throws Exception {
         when(taskService.findAll(eq(TaskStatus.OPEN), eq(TaskPriority.HIGH)))
-                .thenReturn(List.of(new TaskResponse(4L, "Urgent open", TaskStatus.OPEN, TaskPriority.HIGH)));
+                .thenReturn(List.of(new TaskResponse(4L, "Urgent open", TaskStatus.OPEN, TaskPriority.HIGH, null)));
 
         mockMvc.perform(get("/api/tasks")
                         .param("status", "OPEN")
