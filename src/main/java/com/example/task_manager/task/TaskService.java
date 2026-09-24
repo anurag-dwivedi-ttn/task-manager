@@ -30,8 +30,10 @@ public class TaskService {
         return TaskResponse.from(saved);
     }
 
-    public List<TaskResponse> findAll(TaskStatus status, TaskPriority priority) {
-        return repository.findByStatusAndPriority(status, priority).stream()
+    public List<TaskResponse> findAll(TaskStatus status, TaskPriority priority, Boolean overdue) {
+        boolean filterOverdue = Boolean.TRUE.equals(overdue);
+        LocalDate today = filterOverdue ? todayForOverdue() : null;
+        return repository.findByFilters(status, priority, filterOverdue ? true : null, today).stream()
                 .map(TaskResponse::from)
                 .toList();
     }

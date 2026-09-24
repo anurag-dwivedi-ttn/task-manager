@@ -84,22 +84,22 @@ class TaskServiceTest {
     void findAllDelegatesFiltersToRepository() {
         Task task = new Task("Match");
         task.setPriority(TaskPriority.HIGH);
-        when(repository.findByStatusAndPriority(TaskStatus.OPEN, TaskPriority.HIGH))
+        when(repository.findByFilters(TaskStatus.OPEN, TaskPriority.HIGH, null, null))
                 .thenReturn(List.of(task));
 
         List<TaskResponse> results = service.findAll(TaskStatus.OPEN, TaskPriority.HIGH);
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).priority()).isEqualTo(TaskPriority.HIGH);
-        verify(repository).findByStatusAndPriority(eq(TaskStatus.OPEN), eq(TaskPriority.HIGH));
+        verify(repository).findByFilters(eq(TaskStatus.OPEN), eq(TaskPriority.HIGH), isNull(), isNull());
     }
 
     @Test
     void findAllPassesNullFiltersThrough() {
-        when(repository.findByStatusAndPriority(null, null)).thenReturn(List.of());
+        when(repository.findByFilters(null, null, null, null)).thenReturn(List.of());
 
         service.findAll(null, null);
 
-        verify(repository).findByStatusAndPriority(isNull(), isNull());
+        verify(repository).findByFilters(isNull(), isNull(), isNull(), isNull());
     }
 }
