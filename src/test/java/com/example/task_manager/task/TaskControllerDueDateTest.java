@@ -56,7 +56,7 @@ class TaskControllerDueDateTest {
         LocalDate due = LocalDate.of(2026, 9, 24);
         TaskResponse response = new TaskResponse(3L, "Listed", TaskStatus.OPEN, TaskPriority.LOW, due);
         when(taskService.findById(3L)).thenReturn(response);
-        when(taskService.findAll(isNull(), isNull())).thenReturn(List.of(response));
+        when(taskService.findAll(isNull(), isNull(), isNull())).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/tasks/3"))
                 .andExpect(status().isOk())
@@ -71,7 +71,7 @@ class TaskControllerDueDateTest {
     void getAndListExposeNullDueDateWhenUnset() throws Exception {
         TaskResponse response = new TaskResponse(4L, "No date", TaskStatus.OPEN, TaskPriority.MEDIUM, null);
         when(taskService.findById(4L)).thenReturn(response);
-        when(taskService.findAll(isNull(), isNull())).thenReturn(List.of(response));
+        when(taskService.findAll(isNull(), isNull(), isNull())).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/tasks/4"))
                 .andExpect(status().isOk())

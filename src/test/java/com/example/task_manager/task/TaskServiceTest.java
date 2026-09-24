@@ -87,7 +87,7 @@ class TaskServiceTest {
         when(repository.findByFilters(TaskStatus.OPEN, TaskPriority.HIGH, null, null))
                 .thenReturn(List.of(task));
 
-        List<TaskResponse> results = service.findAll(TaskStatus.OPEN, TaskPriority.HIGH);
+        List<TaskResponse> results = service.findAll(TaskStatus.OPEN, TaskPriority.HIGH, null);
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).priority()).isEqualTo(TaskPriority.HIGH);
@@ -95,10 +95,25 @@ class TaskServiceTest {
     }
 
     @Test
+    void findAllPassesOverdueFilterAndTodayFromClock() {
+        ZoneId zone = ZoneId.of("UTC");
+        Clock fixed = Clock.fixed(Instant.parse("2026-09-24T12:00:00Z"), zone);
+        TaskService clocked = new TaskService(repository, fixed);
+        LocalDate today = LocalDate.of(2026, 9, 24);
+        when(repository.findByFilters(TaskStatus.OPEN, TaskPriority.HIGH, true, today))
+                .thenReturn(List.of());
+
+        clocked.findAll(TaskStatus.OPEN, TaskPriority.HIGH, true);
+
+        verify(repository).findByFilters(
+                eq(TaskStatus.OPEN), eq(TaskPriority.HIGH), eq(true), eq(today));
+    }
+
+    @Test
     void findAllPassesNullFiltersThrough() {
         when(repository.findByFilters(null, null, null, null)).thenReturn(List.of());
 
-        service.findAll(null, null);
+        service.findAll(null, null, null);
 
         verify(repository).findByFilters(isNull(), isNull(), isNull(), isNull());
     }
