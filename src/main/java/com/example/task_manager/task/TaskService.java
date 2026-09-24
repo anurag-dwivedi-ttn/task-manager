@@ -15,12 +15,16 @@ public class TaskService {
     }
 
     public TaskResponse create(CreateTaskRequest request) {
-        Task saved = repository.save(new Task(request.title()));
+        Task task = new Task(request.title());
+        task.setPriority(request.priority() != null ? request.priority() : TaskPriority.MEDIUM);
+        Task saved = repository.save(task);
         return TaskResponse.from(saved);
     }
 
-    public List<TaskResponse> findAll() {
-        return repository.findAll().stream().map(TaskResponse::from).toList();
+    public List<TaskResponse> findAll(TaskStatus status, TaskPriority priority) {
+        return repository.findByStatusAndPriority(status, priority).stream()
+                .map(TaskResponse::from)
+                .toList();
     }
 
     public TaskResponse findById(Long id) {
