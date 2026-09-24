@@ -8,7 +8,10 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,15 @@ class TaskServiceTest {
 
     @InjectMocks
     private TaskService service;
+
+    @Test
+    void todayForOverdueDerivedFromInjectedClock() {
+        ZoneId zone = ZoneId.of("UTC");
+        Clock fixed = Clock.fixed(Instant.parse("2026-09-24T12:00:00Z"), zone);
+        TaskService clocked = new TaskService(repository, fixed);
+
+        assertThat(clocked.todayForOverdue()).isEqualTo(LocalDate.of(2026, 9, 24));
+    }
 
     @Test
     void createSavesHighPriorityWhenRequested() {

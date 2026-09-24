@@ -1,5 +1,7 @@
 package com.example.task_manager.task;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -9,9 +11,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class TaskService {
 
     private final TaskRepository repository;
+    private final Clock clock;
 
-    public TaskService(TaskRepository repository) {
+    public TaskService(TaskRepository repository, Clock clock) {
         this.repository = repository;
+        this.clock = clock;
+    }
+
+    LocalDate todayForOverdue() {
+        return clock.instant().atZone(clock.getZone()).toLocalDate();
     }
 
     public TaskResponse create(CreateTaskRequest request) {
