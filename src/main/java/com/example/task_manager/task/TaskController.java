@@ -24,8 +24,9 @@ public class TaskController {
     @GetMapping
     public List<TaskResponse> findAll(
             @RequestParam(required = false) TaskStatus status,
-            @RequestParam(required = false) TaskPriority priority) {
-        return service.findAll(status, priority);
+            @RequestParam(required = false) TaskPriority priority,
+            @RequestParam(required = false) Boolean overdue) {
+        return service.findAll(status, priority, overdue);
     }
 
     @GetMapping("/{id}")

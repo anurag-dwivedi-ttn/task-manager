@@ -8,6 +8,10 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +29,19 @@ class TaskServiceTest {
     private TaskService service;
 
     @Test
+    void todayForOverdueDerivedFromInjectedClock() {
+        ZoneId zone = ZoneId.of("UTC");
+        Clock fixed = Clock.fixed(Instant.parse("2026-09-24T12:00:00Z"), zone);
+        TaskService clocked = new TaskService(repository, fixed);
+
+        assertThat(clocked.todayForOverdue()).isEqualTo(LocalDate.of(2026, 9, 24));
+    }
+
+    @Test
     void createSavesHighPriorityWhenRequested() {
         when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        TaskResponse response = service.create(new CreateTaskRequest("Urgent", TaskPriority.HIGH));
+        TaskResponse response = service.create(new CreateTaskRequest("Urgent", TaskPriority.HIGH, null));
 
         assertThat(response.priority()).isEqualTo(TaskPriority.HIGH);
         verify(repository).save(argThat(task ->
@@ -39,7 +52,7 @@ class TaskServiceTest {
     void createSavesMediumPriorityWhenPriorityIsNull() {
         when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        TaskResponse response = service.create(new CreateTaskRequest("Routine", null));
+        TaskResponse response = service.create(new CreateTaskRequest("Routine", null, null));
 
         assertThat(response.priority()).isEqualTo(TaskPriority.MEDIUM);
         verify(repository).save(argThat(task ->
@@ -47,25 +60,61 @@ class TaskServiceTest {
     }
 
     @Test
+    void createSavesDueDateWhenProvided() {
+        LocalDate due = LocalDate.of(2026, 9, 24);
+        when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.create(new CreateTaskRequest("Dated", null, due));
+
+        verify(repository).save(argThat(task ->
+                "Dated".equals(task.getTitle()) && due.equals(task.getDueDate())));
+    }
+
+    @Test
+    void createSavesNullDueDateWhenOmitted() {
+        when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.create(new CreateTaskRequest("No date", null, null));
+
+        verify(repository).save(argThat(task ->
+                "No date".equals(task.getTitle()) && task.getDueDate() == null));
+    }
+
+    @Test
     void findAllDelegatesFiltersToRepository() {
         Task task = new Task("Match");
         task.setPriority(TaskPriority.HIGH);
-        when(repository.findByStatusAndPriority(TaskStatus.OPEN, TaskPriority.HIGH))
+        when(repository.findByFilters(TaskStatus.OPEN, TaskPriority.HIGH, null, null))
                 .thenReturn(List.of(task));
 
-        List<TaskResponse> results = service.findAll(TaskStatus.OPEN, TaskPriority.HIGH);
+        List<TaskResponse> results = service.findAll(TaskStatus.OPEN, TaskPriority.HIGH, null);
 
         assertThat(results).hasSize(1);
         assertThat(results.get(0).priority()).isEqualTo(TaskPriority.HIGH);
-        verify(repository).findByStatusAndPriority(eq(TaskStatus.OPEN), eq(TaskPriority.HIGH));
+        verify(repository).findByFilters(eq(TaskStatus.OPEN), eq(TaskPriority.HIGH), isNull(), isNull());
+    }
+
+    @Test
+    void findAllPassesOverdueFilterAndTodayFromClock() {
+        ZoneId zone = ZoneId.of("UTC");
+        Clock fixed = Clock.fixed(Instant.parse("2026-09-24T12:00:00Z"), zone);
+        TaskService clocked = new TaskService(repository, fixed);
+        LocalDate today = LocalDate.of(2026, 9, 24);
+        when(repository.findByFilters(TaskStatus.OPEN, TaskPriority.HIGH, true, today))
+                .thenReturn(List.of());
+
+        clocked.findAll(TaskStatus.OPEN, TaskPriority.HIGH, true);
+
+        verify(repository).findByFilters(
+                eq(TaskStatus.OPEN), eq(TaskPriority.HIGH), eq(true), eq(today));
     }
 
     @Test
     void findAllPassesNullFiltersThrough() {
-        when(repository.findByStatusAndPriority(null, null)).thenReturn(List.of());
+        when(repository.findByFilters(null, null, null, null)).thenReturn(List.of());
 
-        service.findAll(null, null);
+        service.findAll(null, null, null);
 
-        verify(repository).findByStatusAndPriority(isNull(), isNull());
+        verify(repository).findByFilters(isNull(), isNull(), isNull(), isNull());
     }
 }
