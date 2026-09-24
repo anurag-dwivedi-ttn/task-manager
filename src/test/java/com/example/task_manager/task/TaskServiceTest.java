@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +45,27 @@ class TaskServiceTest {
         assertThat(response.priority()).isEqualTo(TaskPriority.MEDIUM);
         verify(repository).save(argThat(task ->
                 "Routine".equals(task.getTitle()) && task.getPriority() == TaskPriority.MEDIUM));
+    }
+
+    @Test
+    void createSavesDueDateWhenProvided() {
+        LocalDate due = LocalDate.of(2026, 9, 24);
+        when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.create(new CreateTaskRequest("Dated", null, due));
+
+        verify(repository).save(argThat(task ->
+                "Dated".equals(task.getTitle()) && due.equals(task.getDueDate())));
+    }
+
+    @Test
+    void createSavesNullDueDateWhenOmitted() {
+        when(repository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.create(new CreateTaskRequest("No date", null, null));
+
+        verify(repository).save(argThat(task ->
+                "No date".equals(task.getTitle()) && task.getDueDate() == null));
     }
 
     @Test
