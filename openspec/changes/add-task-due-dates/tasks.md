@@ -11,7 +11,7 @@
 
 ## 3. Create and read due date via API
 
-- [ ] 3.1 Wire create/get/list to return `dueDate` without changing existing fields; verify with `@WebMvcTest` that create with `dueDate`, create omitting `dueDate`, get-by-id, and list responses expose the field (`null` when unset)
+- [x] 3.1 Wire create/get/list to return `dueDate` without changing existing fields; verify with `@WebMvcTest` that create with `dueDate`, create omitting `dueDate`, get-by-id, and list responses expose the field (`null` when unset)
 
 ## 4. Clock and overdue database filtering
 
