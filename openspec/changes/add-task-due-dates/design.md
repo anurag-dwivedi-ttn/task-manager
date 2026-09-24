@@ -36,7 +36,7 @@ The task API already supports create, get-by-id, and list with optional `status`
 
 ### 3. Extend repository JPQL with nullable overdue flag
 
-- **Choice**: Extend `findByStatusAndPriority` (rename if needed) to accept a nullable `Boolean overdue` and `LocalDate today` computed once in the service from `clock.instant().atZone(clock.getZone()).toLocalDate()`. JPQL adds `(:overdue is null or :overdue = false or (t.dueDate is not null and t.dueDate < :today))` (exact spelling in implementation).
+- **Choice**: Extend `findByStatusAndPriority` (rename if needed) to accept a nullable `Boolean overdue` and `LocalDate today` computed once in the service from `clock.instant().atZone(clock.getZone()).toLocalDate()`. When overdue applies, JPQL requires `t.status <> DONE` in addition to `t.dueDate is not null and t.dueDate < :today`, e.g. `(:overdue is null or :overdue = false or (t.status <> DONE and t.dueDate is not null and t.dueDate < :today))` (exact spelling in implementation).
 - **Why**: Keeps filtering in the database; AND semantics align with existing null-parameter pattern for status/priority.
 - **Alternatives**: Separate query methods (duplication); in-memory filter (forbidden by spec).
 

@@ -18,3 +18,7 @@
 - [x] 4.1 Register a `Clock` bean (`Clock.systemDefaultZone()`) and inject it into `TaskService`; verify with a Mockito service test that overdue “today” is derived from the injected clock
 - [x] 4.2 Extend `TaskRepository` JPQL to filter by optional `status`, `priority`, and `overdue` (strict `dueDate < today` when `overdue` is true, AND with other params); verify with `@DataJpaTest` using a fixed reference date passed into the query that overdue-only and combined filters return correct rows and tasks without `dueDate` are excluded when overdue applies
 - [x] 4.3 Wire optional `overdue` query param through `TaskController` → `TaskService` → repository (no in-memory filtering); verify with Mockito service test that repository is called with expected params and with `@WebMvcTest` that `GET /api/tasks?overdue=true` (and combined with status/priority) returns expected mocked results
+
+## 5. Overdue excludes completed tasks
+
+- [x] 5.1 Update `TaskRepository` overdue JPQL so `overdue=true` excludes tasks with status `DONE` (`t.status <> DONE` when the overdue predicate applies); verify with `@DataJpaTest` that saves a `DONE` task with a past `dueDate` and asserts `findByFilters` with `overdue=true` and a fixed `today` does not return it; adjust other overdue repository tests if they assumed `DONE` could appear in overdue results

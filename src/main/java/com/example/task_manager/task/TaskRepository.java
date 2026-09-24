@@ -13,7 +13,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             where (:status is null or t.status = :status)
               and (:priority is null or t.priority = :priority)
               and (:overdue is null or :overdue = false
-                   or (t.dueDate is not null and t.dueDate < :today))
+                   or (t.status <> com.example.task_manager.task.TaskStatus.DONE
+                       and t.dueDate is not null and t.dueDate < :today))
             """)
     List<Task> findByFilters(
             @Param("status") TaskStatus status,

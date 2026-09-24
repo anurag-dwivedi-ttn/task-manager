@@ -9,7 +9,7 @@ Clients need to schedule work with deadlines and quickly surface tasks that are 
 - Add an optional `dueDate` field on task create (ISO calendar date, e.g. `2026-09-24`); omitting it leaves the task without a due date.
 - Include `dueDate` on task responses from create, get-by-id, and list (`null` when unset).
 - Reject invalid `dueDate` values on create with HTTP 400 and an error message that names the `dueDate` field.
-- Extend `GET /api/tasks` with optional query parameter `overdue=true` to return only tasks whose `dueDate` is strictly before today; combine with existing `status` and `priority` filters using logical AND. Overdue filtering runs in the database query.
+- Extend `GET /api/tasks` with optional query parameter `overdue=true` to return only tasks whose `dueDate` is strictly before today and whose status is not `DONE` (completed tasks are never overdue); combine with existing `status` and `priority` filters using logical AND. Overdue filtering runs in the database query.
 - Use an injectable `java.time.Clock` for “today” so overdue logic is testable and timezone-stable.
 - Cover all new behavior with automated tests. Existing response fields and endpoints remain backward compatible (additive only).
 

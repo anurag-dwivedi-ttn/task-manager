@@ -27,7 +27,7 @@ The system SHALL reject create requests with an invalid `dueDate` with HTTP `400
 ## MODIFIED Requirements
 
 ### Requirement: Filter tasks by status and priority
-The system SHALL allow clients to filter `GET /api/tasks` by optional query parameters `status`, `priority`, and `overdue`. An omitted `status` or `priority` parameter MUST mean no filtering on that field. When `overdue` is exactly `true`, the system MUST return only tasks whose `dueDate` is strictly before the current calendar date according to the system's configured clock. When `overdue` is omitted or not `true`, the system MUST NOT filter by overdue. Combining any provided parameters MUST return only tasks that match all provided criteria (logical AND). Filtering MUST be applied in the database query, not by loading all tasks and filtering in application memory.
+The system SHALL allow clients to filter `GET /api/tasks` by optional query parameters `status`, `priority`, and `overdue`. An omitted `status` or `priority` parameter MUST mean no filtering on that field. When `overdue` is exactly `true`, the system MUST return only tasks whose `dueDate` is strictly before the current calendar date according to the system's configured clock and whose `status` is not `DONE`. Tasks with status `DONE` MUST never be treated as overdue regardless of `dueDate`. When `overdue` is omitted or not `true`, the system MUST NOT filter by overdue. Combining any provided parameters MUST return only tasks that match all provided criteria (logical AND). Filtering MUST be applied in the database query, not by loading all tasks and filtering in application memory.
 
 #### Scenario: Filter by status and priority
 - **WHEN** a client sends `GET /api/tasks?status=OPEN&priority=HIGH`
@@ -39,7 +39,12 @@ The system SHALL allow clients to filter `GET /api/tasks` by optional query para
 
 #### Scenario: Filter overdue tasks
 - **WHEN** a client sends `GET /api/tasks?overdue=true` and the system clock's current date is `2026-09-24`
-- **THEN** the response includes only tasks whose `dueDate` is before `2026-09-24` and excludes tasks with no `dueDate` or with `dueDate` on or after `2026-09-24`
+- **THEN** the response includes only tasks whose `dueDate` is before `2026-09-24`, whose `status` is not `DONE`, and excludes tasks with no `dueDate` or with `dueDate` on or after `2026-09-24`
+
+#### Scenario: Completed tasks are never overdue
+- **WHEN** a task has status `DONE` and `dueDate` strictly before the system clock's current date
+- **AND** a client sends `GET /api/tasks?overdue=true`
+- **THEN** that task is not included in the response
 
 #### Scenario: Combine overdue with status and priority
 - **WHEN** a client sends `GET /api/tasks?overdue=true&status=OPEN&priority=HIGH`

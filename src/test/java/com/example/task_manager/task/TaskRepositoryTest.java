@@ -69,6 +69,17 @@ class TaskRepositoryTest {
     }
 
     @Test
+    void overdueOnlyExcludesDoneTasksWithPastDueDate() {
+        repository.deleteAll();
+        repository.save(task("done-past", TaskStatus.DONE, TaskPriority.HIGH, LocalDate.of(2026, 9, 1)));
+        repository.save(task("open-past", TaskStatus.OPEN, TaskPriority.HIGH, LocalDate.of(2026, 9, 1)));
+
+        List<Task> results = repository.findByFilters(null, null, true, TODAY);
+
+        assertThat(results).extracting(Task::getTitle).containsExactly("open-past");
+    }
+
+    @Test
     void overdueCombinedWithStatusAndPriority() {
         repository.deleteAll();
         repository.save(task("overdue-open-high", TaskStatus.OPEN, TaskPriority.HIGH, LocalDate.of(2026, 9, 20)));
